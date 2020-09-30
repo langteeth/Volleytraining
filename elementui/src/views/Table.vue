@@ -5,6 +5,8 @@
     <el-table
             ref="filterTable"
             :data="tableData"
+            stripe
+            @summary-method="summary"
             style="width: 100%">
       <el-table-column
               type="index"
@@ -17,12 +19,7 @@
               sortable
               width="180"
               column-key="date"
-              :filters="[
-                          {text: date1, value: date1},
-                          {text: date2, value:date2},
-                          {text: date3, value: date3},
-                          {text:date4, value: date4}
-                         ]"
+              :filters="selectDate()"
               :filter-method="filterHandler"
       >
       </el-table-column>
@@ -32,14 +29,16 @@
               sortable
               width="180"
               column-key="time"
-              :filters="[{text: time1, value: time1}, {text: time2, value: time2}, {text: time3, value: time3}]"
+              :filters="selectTime()"
               :filter-method="filterHandler"
       >
       </el-table-column>
       <el-table-column
               prop="name"
               label="姓名"
+              sortable
               width="180"
+              column-key="name"
               :filters=" selectName ()"
               :filter-method="filterHandler"
       >
@@ -47,15 +46,20 @@
       <el-table-column
               prop="gender"
               label="性别"
+              sortable
               width="180"
-              :filters="[{text:male,value:male},{text:female,value:female}]"
+              column-key="gender"
+              :filters="selectGender()"
               :filter-method="filterHandler"
       >
       </el-table-column>
       <el-table-column
               prop="address"
               label="训练场馆"
-              :filters="[{text:gym1,value:gym1},{text:gym2,value:gym2}]"
+              sortable
+              width="180"
+              column-key="address"
+              :filters="selectGym()"
               :filter-method="filterHandler"
               :formatter="formatter">
       </el-table-column>
@@ -66,11 +70,10 @@
       </el-table-column>
       <el-table-column
               prop="tag"
-              label="标签"
-              width="100"
-              :filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"
-              :filter-method="filterTag"
-              filter-placement="bottom-end">
+              label="备注"
+              sortable
+              column-key="tag"
+              width="100">
         <template slot-scope="scope">
           <el-tag
                   :type="scope.row.tag === '家' ? 'primary' : 'success'"
@@ -90,255 +93,10 @@
       return {
         tableData: [],
         Name: [],
-        arr2: []
-        // tableData: [
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '田硕',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '田硕',
-        //     gender:'女',
-        //     address: '地坛排球馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //    {
-        //     date: '2020-09-13',
-        //     time: '08:00-10:00',
-        //     name: '田硕',
-        //     gender:'女',
-        //     address: '地坛排球馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-20',
-        //     time: '08:00-10:00',
-        //     name: '田硕',
-        //     gender:'女',
-        //     address: '地坛排球馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '媛媛',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '媛媛',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '童',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '大艾',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: 'Gordon',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: 'Gordon',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '赵莹',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '张骞',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '天一',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '小蔡',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '小智',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '逸生',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '林琳Lily',
-        //     gender:'女',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-09-06',
-        //     time: '08:00-10:00',
-        //     name: '王湛鸣',
-        //     gender:'男',
-        //     address: '地坛体育馆',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //
-        //
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '阿谷',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '小智',
-        //     gender:'男',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '袁小风',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '小云',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '逸生',
-        //     gender:'男',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '小蔡',
-        //     gender:'男',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: 'LouiS',
-        //     gender:'男',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //    {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: '童',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   },
-        //   {
-        //     date: '2020-08-23',
-        //     time: '19:00-22:00',
-        //     name: 'Manyuan',
-        //     gender:'女',
-        //     address: '博锐体育馆（欢乐谷）',
-        //     count:'1',
-        //     tag: ''
-        //   }
-        // ]
+        Date: [],
+        Time: [],
+        Gender:[],
+        Gym:[]
       }
     },
     methods: {
@@ -350,6 +108,9 @@
       },
       formatter(row, column) {
         return row.address;
+      },
+      summary({column, data}) {
+        console.log(111)
       },
       filterTag(value, row) {
         return row.tag === value;
@@ -366,6 +127,18 @@
       },
       selectName () {
         return   [...this.Name.map(this.filterName)]
+      },
+      selectDate () {
+        return [...this.Date.map(this.filterName)]
+      },
+      selectTime () {
+        return [...this.Time.map(this.filterName)]
+      },
+      selectGender () {
+        return [...this.Gender.map(this.filterName)]
+      },
+      selectGym () {
+        return [...this.Gym.map(this.filterName)]
       }
     },
     computed: {
@@ -381,11 +154,20 @@
                 const data = eval('(' + res.data + ')');
                 console.log(data);
                 this.tableData = data;
-                const temp = data.map(item => item.name);
-                console.log(temp)
-                const arr = Array.from(new Set(temp));
-                console.log(arr);
-                this.Name = arr;
+                const name = Array.from(new Set(data.map(item => item.name)));
+                const date = Array.from(new Set(data.map(item => item.date)));
+                const time = Array.from(new Set(data.map(item => item.time)));
+                const gender = Array.from(new Set(data.map(item => item.gender)));
+                const gym = Array.from(new Set(data.map(item => item.address)));
+                this.Gym = gym;
+                console.log(gender);
+                this.Gender = gender;
+                this.Time = time;
+                console.log(time);
+                console.log(date);
+                this.Date = date;
+                console.log(name);
+                this.Name = name;
               })
     },
     mounted() {
